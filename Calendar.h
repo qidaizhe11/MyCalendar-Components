@@ -6,6 +6,7 @@
 #include <QAbstractListModel>
 #include <QAbstractItemModel>
 #include "DayData.h"
+#include "DaysModel.h"
 
 class Calendar : public QObject
 {
@@ -169,6 +170,7 @@ private:
   Types m_types;
   QList<DayData> m_dayList;
   QList<int> m_weekList;
+  DaysModel* m_model;
 //  int m_days;
   int m_weeks;
   int m_startDay;

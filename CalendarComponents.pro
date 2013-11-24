@@ -13,7 +13,8 @@ QML_IMPORT_PATH =
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
-    Calendar.cpp
+    Calendar.cpp \
+    DaysModel.cpp
 
 # Installation path
 # target.path =
@@ -24,7 +25,8 @@ qtcAddDeployment()
 
 HEADERS += \
     Calendar.h \
-    DayData.h
+    DayData.h \
+    DaysModel.h
 
 OTHER_FILES += \
     README
