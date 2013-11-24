@@ -49,8 +49,7 @@ class Calendar : public QObject
   //
   // If an error occured, it will be set in this string as human readable text.
   //
-  Q_PROPERTY(QString errorMessage READ errorMessage WRITE setErrorMessage
-             NOTIFY errorMessageChanged)
+  Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
 
   //
   // This model contains the actual grid data of days.
@@ -73,8 +72,8 @@ class Calendar : public QObject
   // This model contains the events that occur on this day.
   // This also includes events that might not occuring today, but overlap it.
   //
-  Q_PROPERTY(QAbstractItemModel* selectedDayModel READ selectedDayModel
-             CONSTANT)
+//  Q_PROPERTY(QAbstractItemModel* selectedDayModel READ selectedDayModel
+//             CONSTANT)
 
   //
   // This model contains the events that are upcoming from the date you
@@ -83,8 +82,8 @@ class Calendar : public QObject
   // This model will then contain the dates from the selected date + 1 month.
   // Not changable for the moment.
   //
-  Q_PROPERTY(QAbstractItemModel* upcomingEventsModel READ upcomingEventsModel
-             CONSTANT)
+//  Q_PROPERTY(QAbstractItemModel* upcomingEventsModel READ upcomingEventsModel
+//             CONSTANT)
 
   Q_ENUMS(Types)
 
@@ -122,12 +121,12 @@ public:
   int year() const;
 
   // Model containing all events for the given date range
-  QAbstractItemModel* model() const;
+  QAbstractListModel* model() const;
 
   // Model filter that only gived the events for a selected day
-  QAbstractItemModel* selectedDayModel() const;
+//  QAbstractItemModel* selectedDayModel() const;
 
-  QAbstractItemModel* upcomingEventsModel() const;
+//  QAbstractItemModel* upcomingEventsModel() const;
 
   QList<int> weeksModel() const;
 
@@ -138,18 +137,18 @@ public:
 
   // Get the day name by the day possible days (1 - 7).
   // see Qt DayofWeek enum
-  Q_INVOKABLE QString dayName(int weekday) const;
+//  Q_INVOKABLE QString dayName(int weekday) const;
 
   // This sets the currently selected date. This will also the data of the
   // selectedDayModel property since it will contain date of the selected day.
   //
   // TODO: why const?
   //
-  Q_INVOKABLE void setSelectedDay(int year, int month, int day) const;
+//  Q_INVOKABLE void setSelectedDay(int year, int month, int day) const;
 
   // Changing this will update the upcomingEventModel based on the date you
   // provided.
-  Q_INVOKABLE void upcommingEventsFromDay(int year, int month, int day) const;
+//  Q_INVOKABLE void upcommingEventsFromDay(int year, int month, int day) const;
 
 signals:
   void startDateChanged();
