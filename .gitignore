@@ -1,0 +1,5 @@
+*.user
+qtquick2applicationviewer.*
+*.desktop
+*64.png
+*80.png

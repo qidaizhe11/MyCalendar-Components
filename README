@@ -1,0 +1,5 @@
+MyCalendar中Calendar components部分，
+
+连接顶层QML构建的UI与底层SQLite数据库,
+
+此部分基本直接Copy自KDE，后期会详细说明。
