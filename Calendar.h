@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QDate>
 #include <QAbstractListModel>
-#include <QAbstractItemModel>
+//#include <QAbstractItemModel>
 #include "DayData.h"
 #include "DaysModel.h"
 
@@ -61,12 +61,11 @@ class Calendar : public QObject
   // metadata about the current day. The exact metadata can be found in
   // "DaysModel.cpp" where the exact names usable in QML are being set.
   //
-  Q_PROPERTY(QAbstractItemModel* model READ model CONSTANT)
+  Q_PROPERTY(QAbstractItemModel* daysModel READ daysModel CONSTANT)
 
   //
   // This model contains the week numbers for the given data grid.
-  Q_PROPERTY(QList<int> weeksModel READ weeksModel
-             NOTIFY startDateChanged CONSTANT)
+  Q_PROPERTY(QList<int> weeksModel READ weeksModel CONSTANT)
 
   //
   // This model contains the events that occur on this day.
@@ -121,7 +120,7 @@ public:
   int year() const;
 
   // Model containing all events for the given date range
-  QAbstractListModel* model() const;
+  QAbstractListModel* daysModel() const;
 
   // Model filter that only gived the events for a selected day
 //  QAbstractItemModel* selectedDayModel() const;

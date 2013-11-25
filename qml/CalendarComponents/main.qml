@@ -9,28 +9,35 @@ Rectangle {
     width: 640
     height: 480
 
-    GridLayout {
-        id: mainLayout
+//    GridLayout {
+//        id: mainLayout
+//        anchors.fill: parent
+//        columns: 7
+//        flow: GridLayout.LeftToRight
+
+//        Repeater {
+////            model: 7 * 6
+//            model: calendar.model
+//            Loader {
+//                Layout.fillWidth: true
+//                Layout.fillHeight: true
+//                Layout.minimumWidth: 60
+//                Layout.minimumHeight: 60
+//                Layout.rowSpan: 3
+
+//                property int value: index
+//                sourceComponent: dateDelegate
+//            }
+//        }
+
+
+//    }
+
+    GridView {
+        cellWidth: 100; cellHeight: 100
         anchors.fill: parent
-        columns: 7
-        flow: GridLayout.LeftToRight
-
-        Repeater {
-//            model: 7 * 6
-            model: calendar.model
-            Loader {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumWidth: 60
-                Layout.minimumHeight: 60
-                Layout.rowSpan: 3
-
-                property int value: index
-                sourceComponent: dateDelegate
-            }
-        }
-
-
+        model: calendar.model
+        delegate: dateDelegate
     }
 
     Rectangle {
@@ -52,7 +59,8 @@ Rectangle {
 //            width: 40; height: 4
             color: "darkgray"
             Text {
-                text: parent.parent.value
+//                text: parent.parent.value
+                text: dayNumber
                 color: "white"
                 font.pixelSize: 16
                 anchors {

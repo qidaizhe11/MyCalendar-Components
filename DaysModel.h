@@ -13,10 +13,10 @@ public:
     isPreviousMonth = Qt::UserRole + 1,
     isCurrentMonth,
     isNextMonth,
-    containsHolidayItems,
+//    containsHolidayItems,
     containsEventItems,
-    containsTodoItems,
-    containsJournalItems,
+//    containsTodoItems,
+//    containsJournalItems,
     dayNumber,
     monthNumber,
     yearNumber

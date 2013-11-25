@@ -87,7 +87,7 @@ int Calendar::year() const
   return m_startDate.year();
 }
 
-QAbstractListModel* Calendar::model() const
+QAbstractListModel* Calendar::daysModel() const
 {
   return m_model;
 }
@@ -131,7 +131,7 @@ void Calendar::updateData()
       day.dayNumber = previousMonth.daysInMonth() -
           (daysBeforeCurrentMonth - (i + 1));
       day.monthNumber = previousMonth.month();
-      day.dayNumber = previousMonth.year();
+      day.yearNumber = previousMonth.year();
       day.containsEventItems = false;
       m_dayList << day;
     }

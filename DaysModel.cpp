@@ -16,10 +16,10 @@ QHash<int, QByteArray> DaysModel::roleNames() const
   roleNames.insert(isPreviousMonth, "isPreviousMonth");
   roleNames.insert(isCurrentMonth, "isCurrentMonth");
   roleNames.insert(isNextMonth, "isNextMonth");
-  roleNames.insert(containsHolidayItems, "containsHolidayItems");
+//  roleNames.insert(containsHolidayItems, "containsHolidayItems");
   roleNames.insert(containsEventItems, "containsEventItems");
-  roleNames.insert(containsTodoItems, "containsTodoItems");
-  roleNames.insert(containsJournalItems, "containsJournalItems");
+//  roleNames.insert(containsTodoItems, "containsTodoItems");
+//  roleNames.insert(containsJournalItems, "containsJournalItems");
   roleNames.insert(dayNumber, "dayNumber");
   roleNames.insert(monthNumber, "monthNumber");
   roleNames.insert(yearNumber, "yearNumber");
@@ -59,14 +59,14 @@ QVariant DaysModel::data(const QModelIndex &index, int role) const
 //      return currentData.isCurrentMonth;
     case isNextMonth:
       return currentData.isNextMonth;
-    case containsHolidayItems:
-      return currentData.containsHolidayItems;
+//    case containsHolidayItems:
+//      return currentData.containsHolidayItems;
     case containsEventItems:
       return currentData.containsEventItems;
-    case containsTodoItems:
-      return currentData.containsTodoItems;
-    case containsJournalItems:
-      return currentData.containsJournalItems;
+//    case containsTodoItems:
+//      return currentData.containsTodoItems;
+//    case containsJournalItems:
+//      return currentData.containsJournalItems;
     case dayNumber:
       return currentData.dayNumber;
     case monthNumber:
