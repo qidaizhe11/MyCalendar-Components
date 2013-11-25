@@ -46,36 +46,21 @@ Rectangle {
 //        anchors.fill: parent
 //    }
 
-    GridView {
-        cellHeight: 60; cellWidth: 80
+    GridLayout {
+        id: mainLayout
         anchors.fill: parent
-        model: monthCalendar.daysModel
-        delegate: DayDelegate {}
+//        anchors.margins: -1
+        anchors.leftMargin: -1
+        anchors.topMargin: -1
+        columns: 7
+        flow: GridLayout.LeftToRight
+        columnSpacing: 0
+        rowSpacing: 0
+
+        Repeater {
+            id: repeater
+            model: monthCalendar.daysModel
+            delegate: DayDelegate {}
+        }
     }
-
-//    GridLayout {
-//        id: mainLayout
-//        anchors.fill: parent
-//        columns: 7
-//        flow: GridLayout.LeftToRight
-
-//        Repeater {
-//            model: monthCalendar.model
-//            delegate: DayDelegate {}
-//        }
-//    }
-
-//    Grid {
-//        id: calendarDays
-//        anchors.fill: parent
-//        columns: 7
-//        rows: 1 + monthCalendar.weeks
-//        spacing: 0
-
-//        Repeater {
-//            id: repeater
-//            model: monthCalendar.daysModel
-//            delegate: DayDelegate {}
-//        }
-//    }
 }

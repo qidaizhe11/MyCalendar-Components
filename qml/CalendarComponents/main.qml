@@ -2,21 +2,20 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.0
-import org.kde.pim.calendar 1.0
+//import org.kde.pim.calendar 1.0
 
 Rectangle {
-//    title: qsTr("Hello World")
     width: 640
     height: 480
 
-//    GridLayout {
-//        id: mainLayout
-//        anchors.fill: parent
-//        columns: 7
-//        flow: GridLayout.LeftToRight
+    GridLayout {
+        id: mainLayout
+        anchors.fill: parent
+        anchors.margins: 0
+        columns: 7
+        flow: GridLayout.LeftToRight
 
 //        Repeater {
-////            model: 7 * 6
 //            model: calendar.model
 //            Loader {
 //                Layout.fillWidth: true
@@ -30,14 +29,15 @@ Rectangle {
 //            }
 //        }
 
-
-//    }
-
-    GridView {
-        cellWidth: 100; cellHeight: 100
-        anchors.fill: parent
-        model: calendar.model
-        delegate: dateDelegate
+        Repeater {
+            model: 7 * 6
+            Loader {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                property int value: index
+                sourceComponent: dateDelegate
+            }
+        }
     }
 
     Rectangle {
@@ -56,11 +56,9 @@ Rectangle {
     Component {
         id: dateDelegate
         Rectangle {
-//            width: 40; height: 4
             color: "darkgray"
             Text {
-//                text: parent.parent.value
-                text: dayNumber
+                text: parent.parent.value
                 color: "white"
                 font.pixelSize: 16
                 anchors {
@@ -71,9 +69,8 @@ Rectangle {
         }
     }
 
-    Calendar {
-        id: calendar
-        weeks: 5
-//        startDate: date.
-    }
+//    Calendar {
+//        id: calendar
+//        weeks: 5
+//    }
 }
