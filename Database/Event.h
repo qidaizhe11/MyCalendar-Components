@@ -4,6 +4,7 @@
 #include <QSqlRecord>
 #include <QDateTime>
 #include <QString>
+#include <QList>
 
 class Event
 {
@@ -18,28 +19,30 @@ public:
     Duration_custom
   };
 
-  enum RepeatType {
-    Repeat_none = 0,
-    Repeat_day,
-    Repeat_workday,
-    Repeat_week,
-    Repeat_month
-  };
+//  enum RepeatType {
+//    Repeat_none = 0,
+//    Repeat_day,
+//    Repeat_workday,
+//    Repeat_week,
+//    Repeat_month
+//  };
 
   Event();
 
+  void loadEvents(const QDate& start_day, int days, QList<Event> *events);
+
 private:
-  void load(const QSqlRecord& record);
+//  void load(const QSqlRecord& record);
 
   int m_event_id;
-  int m_calendar_id;
   QString m_title;
   QString m_description;
   QString m_location;
   QDateTime m_dtstart;
   QDateTime m_dtend;
-  int m_duration;
+  DurationType m_duration;
   bool m_allday;
+  bool m_is_repeating;
   int m_access_level;
   int m_availability;
 

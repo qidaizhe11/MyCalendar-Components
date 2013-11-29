@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     Calendar.cpp \
     DaysModel.cpp \
     Database/CalendarContract.cpp \
-    Database/Event.cpp
+    Database/Event.cpp \
+    Database/CalendarInstancesHelper.cpp
 
 # Installation path
 # target.path =
@@ -32,7 +33,8 @@ HEADERS += \
     DayData.h \
     DaysModel.h \
     Database/CalendarContract.h \
-    Database/Event.h
+    Database/Event.h \
+    Database/CalendarInstancesHelper.h
 
 OTHER_FILES += \
     README

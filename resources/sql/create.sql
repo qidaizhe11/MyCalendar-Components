@@ -30,6 +30,7 @@ CREATE TABLE Events (
     hasAlarm INTEGER NOT NULL DEFAULT 0,
     rrule TEXT,
     rdate TEXT,
+    lastDate INTEGER,
     hasAttendeeData INTEGER NOT NULL DEFAULT 0,
     organizer STRING,
     eventEndTimezone TEXT,

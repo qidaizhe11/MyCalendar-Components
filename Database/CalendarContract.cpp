@@ -1,38 +1,58 @@
 #include "CalendarContract.h"
 
+static const QString CALENDARS;
+static const QString EVENTS;
+static const QString INSTANCES;
+static const QString ATTENDEES;
+static const QString REMINDERS;
+static const QString COLORS;
+
+// Tables
+
+const QString Tables::CALENDARS = "Calendars";
+const QString Tables::EVENTS = "Events";
+const QString Tables::INSTANCES = "Instances";
+const QString Tables::ATTENDEES = "Attendees";
+const QString Tables::REMINDERS = "Reminders";
+const QString Tables::COLORS = "Colors";
+
+// Views
+const QString Views::EVENTS = "view_events";
+
 // Calendars
 
-const QString CalendarColumns::NAME = "name";
-const QString CalendarColumns::CALENDAR_COLOR = "calendar_color";
-const QString CalendarColumns::CALENDAR_DISPLAYNAME = "calendar_displayName";
-const QString CalendarColumns::VISIBLE = "visible";
+const QString Calendars::NAME = "name";
+const QString Calendars::CALENDAR_COLOR = "calendar_color";
+const QString Calendars::CALENDAR_DISPLAYNAME = "calendar_displayName";
+const QString Calendars::VISIBLE = "visible";
 
 // Events
 
-const QString EventColumns::CALENDAR_ID = "calendar_id";
-const QString EventColumns::TITLE = "title";
-const QString EventColumns::DESCRIPTION = "description";
-const QString EventColumns::EVENT_LOCATION = "eventLocation";
-const QString EventColumns::DT_START = "dtstart";
-const QString EventColumns::DT_END = "dtend";
-const QString EventColumns::DURATION = "duration";
-const QString EventColumns::EVENT_TIMEZONE = "eventTimezone";
-const QString EventColumns::EVENT_END_TIMEZONE = "eventEndTimezone";
-const QString EventColumns::ALL_DAY = "allday";
-const QString EventColumns::AVAILABILITY = "availability";
-const QString EventColumns::ACCESS_LEVEL = "accessLevel";
-const QString EventColumns::RRULE = "rrule";
-const QString EventColumns::RDATE = "rdate";
-const QString EventColumns::ORGANIZER = "organizer";
+const QString Events::CALENDAR_ID = "calendar_id";
+const QString Events::TITLE = "title";
+const QString Events::DESCRIPTION = "description";
+const QString Events::EVENT_LOCATION = "eventLocation";
+const QString Events::DT_START = "dtstart";
+const QString Events::DT_END = "dtend";
+const QString Events::DURATION = "duration";
+const QString Events::EVENT_TIMEZONE = "eventTimezone";
+const QString Events::EVENT_END_TIMEZONE = "eventEndTimezone";
+const QString Events::ALL_DAY = "allday";
+const QString Events::AVAILABILITY = "availability";
+const QString Events::ACCESS_LEVEL = "accessLevel";
+const QString Events::RRULE = "rrule";
+const QString Events::RDATE = "rdate";
+const QString Events::ORGANIZER = "organizer";
+const QString Events::LAST_DATE = "lastDate";
 
-const int EventColumns::ACCESS_DEFAULT = 0;
-const int EventColumns::ACCESS_CONFIDENTIAL = 1;
-const int EventColumns::ACCESS_PRIVATE = 2;
-const int EventColumns::ACCESS_PUBLIC = 3;
+const int Events::ACCESS_DEFAULT = 0;
+const int Events::ACCESS_CONFIDENTIAL = 1;
+const int Events::ACCESS_PRIVATE = 2;
+const int Events::ACCESS_PUBLIC = 3;
 
-const int EventColumns::AVAILABILITY_BUSY = 0;
-const int EventColumns::AVAILABILITY_FREE = 1;
-const int EventColumns::AVAILABILITY_TENTATIVE = 2;
+const int Events::AVAILABILITY_BUSY = 0;
+const int Events::AVAILABILITY_FREE = 1;
+const int Events::AVAILABILITY_TENTATIVE = 2;
 
 // Instances
 
@@ -46,12 +66,12 @@ const QString Instances::END_MINUTE = "endMinute";
 
 // Reminders
 
-const QString ReminderColumns::EVENT_ID = "event_id";
-const QString ReminderColumns::MINUTES = "minutes";
-const QString ReminderColumns::METHOD = "method";
+const QString Reminders::EVENT_ID = "event_id";
+const QString Reminders::MINUTES = "minutes";
+const QString Reminders::METHOD = "method";
 
-const int ReminderColumns::METHOD_DEFAULT = 0;
-const int ReminderColumns::METHOD_ALERT = 1;
-const int ReminderColumns::METHOD_EMAIL = 2;
-const int ReminderColumns::METHOD_SMS = 3;
-const int ReminderColumns::METHOD_ALARM = 4;
+const int Reminders::METHOD_DEFAULT = 0;
+const int Reminders::METHOD_ALERT = 1;
+const int Reminders::METHOD_EMAIL = 2;
+const int Reminders::METHOD_SMS = 3;
+const int Reminders::METHOD_ALARM = 4;
