@@ -1,11 +1,10 @@
+
 #include "CalendarContract.h"
 
-static const QString CALENDARS;
-static const QString EVENTS;
-static const QString INSTANCES;
-static const QString ATTENDEES;
-static const QString REMINDERS;
-static const QString COLORS;
+// BaseColumns
+
+const QString BaseColumns::_ID = "_id";
+const QString BaseColumns::_COUNT = "_count";
 
 // Tables
 

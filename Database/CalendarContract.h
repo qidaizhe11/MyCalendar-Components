@@ -3,6 +3,11 @@
 
 #include <QString>
 
+class BaseColumns {
+  static const QString _ID;
+  static const QString _COUNT;
+};
+
 class Tables {
 public:
   static const QString CALENDARS;
@@ -26,7 +31,7 @@ public:
   static const QString VISIBLE;
 };
 
-class Events
+class Events : public BaseColumns
 {
 public:
   static const QString CALENDAR_ID;

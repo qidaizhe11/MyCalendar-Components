@@ -10,7 +10,7 @@ Event::Event()
 void Event::loadEvents(const QDate &start_day, int days, QList<Event> *events)
 {
   QDate end_day = start_day + days - 1;
-  qint64 start = QDateTime(start_day).toMSecsSinceEpoch();
+  qint64 begin = QDateTime(start_day).toMSecsSinceEpoch();
   qint64 end = QDateTime(end_day, QTime(23, 59)).toMSecsSinceEpoch();
 
   QString SQL_SELECT_REPEAT_EVENTS = QString(
@@ -20,7 +20,7 @@ void Event::loadEvents(const QDate &start_day, int days, QList<Event> *events)
         " and " + "( " +
         Events::DT_START + " <= " + end + " and " +
         + "(" + Events::LAST_DATE + " is null or " +
-        Events::LAST_DATE + " >= " + start + ")"
+        Events::LAST_DATE + " >= " + begin + ")"
         + " )");
 
 //  select * from events
