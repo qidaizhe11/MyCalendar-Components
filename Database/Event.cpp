@@ -9,7 +9,7 @@ Event::Event()
 
 void Event::loadEvents(const QDate &start_day, int days, QList<Event> *events)
 {
-  QDate end_day = start_day + days - 1;
+  QDate end_day = start_day.addDays(days - 1);
   qint64 begin = QDateTime(start_day).toMSecsSinceEpoch();
   qint64 end = QDateTime(end_day, QTime(23, 59)).toMSecsSinceEpoch();
 

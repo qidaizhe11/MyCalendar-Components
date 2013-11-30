@@ -4,6 +4,7 @@
 #include <QString>
 
 class BaseColumns {
+public:
   static const QString _ID;
   static const QString _COUNT;
 };

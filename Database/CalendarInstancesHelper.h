@@ -5,7 +5,7 @@
 #include <QDateTime>
 #include <QSqlRecord>
 #include <QList>
-#include <libical/icalrecur.h>
+#include <libical/ical.h>
 
 class CalendarInstancesHelper
 {
@@ -16,9 +16,11 @@ public:
                                 const QSqlRecord& record);
 
 private:
-  QList<qint64> recurrenceDateExpand(qint64 event_time,
-                                 const icalrecurrencetype& recur,
-                                 qint64 begin, qint64 end);
+  void dateExpand(qint64 dtstart, const icalrecurrencetype& recur,
+                  qint64 range_start, qint64 range_end,
+                  QList<qint64>* expandedDates);
+  int calculateByXXCount(const short* by_XX_array, int by_XX_size);
+  int day2TimeDay(icalrecurrencetype_weekday ical_weekday);
 };
 
 #endif // CALENDARINSTANCESHELPER_H

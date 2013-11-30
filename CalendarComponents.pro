@@ -13,6 +13,8 @@ QML_IMPORT_PATH =
 
 QT += sql
 
+LIBS        += /usr/lib64/libical.so
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     Calendar.cpp \
