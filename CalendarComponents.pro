@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     DaysModel.cpp \
     Database/CalendarContract.cpp \
     Database/Event.cpp \
-    Database/CalendarInstancesHelper.cpp
+    Database/CalendarInstancesHelper.cpp \
+    Database/RecurrenceProcessor.cpp
 
 # Installation path
 # target.path =
@@ -36,7 +37,8 @@ HEADERS += \
     DaysModel.h \
     Database/CalendarContract.h \
     Database/Event.h \
-    Database/CalendarInstancesHelper.h
+    Database/CalendarInstancesHelper.h \
+    Database/RecurrenceProcessor.h
 
 OTHER_FILES += \
     README
