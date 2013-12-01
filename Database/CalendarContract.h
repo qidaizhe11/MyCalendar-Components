@@ -64,6 +64,7 @@ public:
 
 class Instances
 {
+public:
   static const QString BEGIN;
   static const QString END;
   static const QString EVENT_ID;
@@ -75,6 +76,7 @@ class Instances
 
 class Reminders
 {
+public:
   static const QString EVENT_ID;
   static const QString MINUTES;
   static const QString METHOD;

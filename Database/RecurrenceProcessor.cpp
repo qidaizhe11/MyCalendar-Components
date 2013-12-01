@@ -1,5 +1,8 @@
 
 #include "RecurrenceProcessor.h"
+//#include <QDate>
+
+#define DEBUG
 
 RecurrenceProcessor::RecurrenceProcessor()
   : byDayCount(0), byMonthDayCount(0)
@@ -19,6 +22,12 @@ void RecurrenceProcessor::expand(qint64 dtstart,
   QDateTime iterator;
   QDateTime until;
   QDateTime generated;
+
+#ifdef DEBUG
+  QDateTime dt_start_date = QDateTime::fromMSecsSinceEpoch(dtstart);
+  QDateTime range_start_date = QDateTime::fromMSecsSinceEpoch(range_start);
+  QDateTime range_end_time = QDateTime::fromMSecsSinceEpoch(range_end);
+#endif
 
   m_recur = recur;
 
@@ -53,7 +62,7 @@ void RecurrenceProcessor::expand(qint64 dtstart,
   // TODO: 完善usebyhour, usebyminute, usebysecond
 
   iterator = QDateTime::fromMSecsSinceEpoch(dtstart);
-  if (ICAL_MONTHLY_RECURRENCE) {
+  if (freq == ICAL_MONTHLY_RECURRENCE) {
     if (useDays) {
       // if ..., set the iterator day field to 1 because sometimes
       // we'll skip months if it's greater than 28.
@@ -83,7 +92,7 @@ void RecurrenceProcessor::expand(qint64 dtstart,
 
     do { // month
       int month = usebymonth ? recur.by_month[monthIndex] : iteratorMonth;
-      month--;
+//      month--;
 
       int dayIndex = 0;
       int my_by_day_count = 0;
@@ -97,6 +106,7 @@ void RecurrenceProcessor::expand(qint64 dtstart,
 //          lastDayToExamine = dayIndex + 6;
 //        }
         generateDaysList(iterator.date(), &my_by_day);
+        my_by_day_count = my_by_day.count();
       }
 
       do { // day
@@ -145,13 +155,13 @@ void RecurrenceProcessor::expand(qint64 dtstart,
       switch (freq) {
       case ICAL_DAILY_RECURRENCE:
       case ICAL_WEEKLY_RECURRENCE:
-        iterator.addDays(value);
+        iterator = iterator.addDays(value);
         break;
       case ICAL_MONTHLY_RECURRENCE:
-        iterator.addMonths(value);
+        iterator = iterator.addMonths(value);
         break;
       case ICAL_YEARLY_RECURRENCE:
-        iterator.addYears(value);
+        iterator = iterator.addYears(value);
         break;
       default:
         break;
@@ -160,7 +170,7 @@ void RecurrenceProcessor::expand(qint64 dtstart,
       if (freq != ICAL_YEARLY_RECURRENCE && freq != ICAL_MONTHLY_RECURRENCE) {
         break;
       }
-      if (iterator.date().day == oldDay) {
+      if (iterator.date().day() == oldDay) {
         break;
       }
       n++;
@@ -204,7 +214,7 @@ void RecurrenceProcessor::generateDaysList(const QDate &current_month,
           last_occured_date = last_occured_date.addMonths(interval);
           if (last_occured_date.month() == current_month.month()) {
             dayslist->append(day);
-            m_bymonthday_last_occurs.at(dayIndex) = last_occured_date;
+            m_bymonthday_last_occurs[dayIndex] = last_occured_date;
           }
         } // end else
       }
@@ -242,7 +252,9 @@ void RecurrenceProcessor::generateDaysList(const QDate &current_month,
             while (day <= days_in_current_month) {
               dayslist->append(day);
               if (interval > 1) {
-                m_byday_last_occurs.at(dayIndex) = day;
+                QDate t_date = m_byday_last_occurs.at(dayIndex);
+                m_byday_last_occurs[dayIndex] =
+                    QDate(t_date.year(), t_date.month(), day);
               }
               day += 7;
             }
@@ -250,18 +262,23 @@ void RecurrenceProcessor::generateDaysList(const QDate &current_month,
             if (day <= days_in_current_month) {
               dayslist->append(day);
               if (interval > 1) {
-                m_byday_last_occurs.at(dayIndex) = day;
+                QDate t_date = m_byday_last_occurs.at(dayIndex);
+                m_byday_last_occurs[dayIndex] =
+                    QDate(t_date.year(), t_date.month(), day);
               }
             }
           }
         } else { // interval > 1 && is_first_occured = false
           // weekly event
           if (m_recur.freq == ICAL_WEEKLY_RECURRENCE) {
+            QDate last_occured_date = m_byday_last_occurs.at(dayIndex);
             last_occured_date = last_occured_date.addDays(interval * 7);
             if (last_occured_date.month() == current_month.month()) {
               while (day <= days_in_current_month) {
                 dayslist->append(day);
-                m_byday_last_occurs.at(dayIndex) = day;
+                QDate t_date = m_byday_last_occurs.at(dayIndex);
+                m_byday_last_occurs[dayIndex] =
+                    QDate(t_date.year(), t_date.month(), day);
                 day += interval*7;
               }
             }
@@ -271,7 +288,9 @@ void RecurrenceProcessor::generateDaysList(const QDate &current_month,
             if (last_occured_date.month() == current_month.month()) {
               if (day <= days_in_current_month) {
                 dayslist->append(day);
-                m_byday_last_occurs.at(dayIndex) = day;
+                QDate t_date = m_byday_last_occurs.at(dayIndex);
+                m_byday_last_occurs[dayIndex] =
+                    QDate(t_date.year(), t_date.month(), day);
               }
             }
           }
@@ -332,103 +351,3 @@ int RecurrenceProcessor::day2TimeDay(
     throw QString("bad type: ICAL_NO_WEEKDAY");
   }
 }
-
-//    if (interval > 1) {
-//      while (dayIndex < byMonthDayCount) {
-//        int day = m_recur.by_month_day[dayIndex];
-
-//        if (day <= days_in_current_month) {
-//          if (m_bymonthday_last_occurs.at(dayIndex).isNull()) {
-//            dayslist->append(day);
-//            m_bymonthday_last_occurs.append(
-//                  QDate(current_month.year(), current_month.month(), day));
-//          } else {
-//            QDate last_occured_date = m_bymonthday_last_occurs.at(dayIndex);
-//            last_occured_date = last_occured_date.addMonths(interval);
-//            if (last_occured_date.month() == current_month.month()) {
-//              dayslist->append(day);
-//              m_bymonthday_last_occurs.at(dayIndex) = last_occured_date;
-//            }
-//          }
-//        }
-//        dayIndex++;
-//      } // end while
-//    } else { // interval = 1
-//      while (dayIndex < byMonthDayCount) {
-//        int day = m_recur.by_month_day[dayIndex];
-//        if (day <= days_in_current_month) {
-//          dayslist->append(day);
-//        }
-//        dayIndex++;
-//      }
-//    }
-
-
-//    if (interval > 1) {
-//      while (dayIndex < byDayCount) {
-//        int ical_by_day_day = m_recur.by_day[dayIndex];
-//        int day_number = ical_by_day_day / 8;
-//        int day_of_week = icalByDay2WeekDay(ical_by_day_day);
-
-//        int day = 0;
-//        if (day_of_week >= firstday_of_week) {
-//          day = day_of_week - firstday_of_week + 1 + 7*day_number;
-//        } else {
-//          day = day_of_week + 8 - firstday_of_week + 7*day_number;
-//        }
-
-//        if (m_byday_last_occurs.at(dayIndex).isNull()) {
-//          // weekly event
-//          // ...
-//          // monthly event
-//          // ...
-//        } else {
-//          // monthly event
-//          QDate last_occured_date = m_byday_last_occurs.at(dayIndex);
-//          last_occured_date = last_occured_date.addMonths(interval);
-//          if (last_occured_date.month() == current_month.month()) {
-//            if (day <= days_in_current_month) {
-//              dayslist->append(day);
-//              m_byday_last_occurs.at(dayIndex) = day;
-//            }
-//          }
-
-//          // weekly event
-//          last_occured_date = last_occured_date.addDays(interval * 7);
-//          if (last_occured_date.month() == current_month.month()) {
-//            while (day <= days_in_current_month) {
-//              dayslist->append(day);
-//              m_byday_last_occurs.at(dayIndex) = day;
-//              day += interval*7;
-//            }
-//          }
-//        }
-//      }
-//    } else { // interval = 1
-//      while (dayIndex < byDayCount) {
-//        int ical_by_day_day = m_recur.by_day[dayIndex];
-//        int day_number = ical_by_day_day / 8;
-//        int day_of_week = icalByDay2WeekDay(ical_by_day_day);
-
-//        int day = 0;
-//        if (day_of_week >= firstday_of_week) {
-//          day = day_of_week - firstday_of_week + 1 + 7*day_number;
-//        } else {
-//          day = day_of_week + 8 - firstday_of_week + 7*day_number;
-//        }
-
-//        // weekly event
-//        if (m_recur.freq == ICAL_WEEKLY_RECURRENCE) {
-//          while (day <= days_in_current_month) {
-//            dayslist->append(day);
-//            day += 7;
-//          }
-//        } else { // monthly event
-//          if (day <= days_in_current_month) {
-//            dayslist->append(day);
-//          }
-//        }
-
-//        dayIndex++;
-//      }
-//    }

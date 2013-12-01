@@ -7,6 +7,8 @@
 #include <QList>
 //#include <libical/ical.h>
 
+class Instance;
+
 class CalendarInstancesHelper
 {
 public:

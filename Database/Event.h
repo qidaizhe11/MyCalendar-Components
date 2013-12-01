@@ -29,7 +29,7 @@ public:
 
   Event();
 
-  void loadEvents(const QDate& start_day, int days, QList<Event> *events);
+  static void loadEvents(const QDate& start_day, int days, QList<Event> *events);
 
 private:
 //  void load(const QSqlRecord& record);

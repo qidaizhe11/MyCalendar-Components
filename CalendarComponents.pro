@@ -11,7 +11,7 @@ QML_IMPORT_PATH =
 # CONFIG += mobility
 # MOBILITY +=
 
-QT += sql
+QT += sql core widgets
 
 LIBS        += /usr/lib64/libical.so
 
@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     Database/CalendarContract.cpp \
     Database/Event.cpp \
     Database/CalendarInstancesHelper.cpp \
-    Database/RecurrenceProcessor.cpp
+    Database/RecurrenceProcessor.cpp \
+    Database/Database.cpp
 
 # Installation path
 # target.path =
@@ -38,7 +39,8 @@ HEADERS += \
     Database/CalendarContract.h \
     Database/Event.h \
     Database/CalendarInstancesHelper.h \
-    Database/RecurrenceProcessor.h
+    Database/RecurrenceProcessor.h \
+    Database/Database.h
 
 OTHER_FILES += \
     README

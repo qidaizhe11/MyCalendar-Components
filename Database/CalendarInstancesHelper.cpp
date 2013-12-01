@@ -13,11 +13,17 @@ CalendarInstancesHelper::CalendarInstancesHelper()
 //  struct icalrecurrencetype recur = icalrecurrencetype_from_string(
 //        "FREQ=WEEKLY;COUNT=8;BYDAY=MO,TU,WE,TH,FR");
 
-  char* str = "FREQ=MONTHLY;BYDAY=2SU";
+//  char* str = "FREQ=MONTHLY;BYDAY=2SU";
 //  char* str = "FREQ=WEEKLY;COUNT=8;BYDAY=SU";
-  icalrecurrencetype recur = icalrecurrencetype_from_string(str);
+//  icalrecurrencetype recur = icalrecurrencetype_from_string(str);
 
-  int count = recur.count;
+//  int count = recur.count;
+  QString str = "PT32400S";
+  QByteArray byte_array = str.toLatin1();
+  char* c_str = byte_array.data();
+  icaldurationtype duration = icaldurationtype_from_string(c_str);
+
+  int i = duration.days;
 }
 
 //
@@ -39,11 +45,11 @@ void CalendarInstancesHelper::performInstanceExpansion(qint64 begin, qint64 end,
   QString rrule_str = record.value(Events::RRULE).toString();
   QString rdate_str = record.value(Events::RDATE).toString();
 
-  struct icaldurationtype duration;
+  icaldurationtype duration;
 
   if (!duration_str.isEmpty()) {
     QByteArray byte_array = duration_str.toLatin1();
-    const char* c_dur = byte_array.data();
+    char* c_dur = byte_array.data();
     duration = icaldurationtype_from_string(c_dur);
   }
 
@@ -65,9 +71,9 @@ void CalendarInstancesHelper::performInstanceExpansion(qint64 begin, qint64 end,
     foreach (qint64 date, dates) {
       qint64 dtend_millis = date + duration_millis;
       Instance* instance_value = new Instance();
-      instance_value.m_event_id = event_id;
-      instance_value.m_begin = date;
-      instance_value.m_end = dtend_millis;
+      instance_value->m_event_id = event_id;
+      instance_value->m_begin = date;
+      instance_value->m_end = dtend_millis;
       instances_list.append(instance_value);
     }
   }
@@ -75,7 +81,7 @@ void CalendarInstancesHelper::performInstanceExpansion(qint64 begin, qint64 end,
 
 void CalendarInstancesHelper::instancesReplace(QList<Instance *> instances_list)
 {
-  Instance* instance_value = nullptr;
+  Instance* instance_value = NULL;
   QString database_error;
 
   QString SQL_REPLACE_INSTANCES = QString(

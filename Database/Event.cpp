@@ -8,7 +8,7 @@ Event::Event()
 {
 }
 
-void Event::loadEvents(const QDate &start_day, int days, QList<Event> *events)
+void Event::loadEvents(const QDate &start_day, int days, QList<Event> */*events*/)
 {
   CalendarInstancesHelper* instances_helper = new CalendarInstancesHelper();
 
@@ -21,9 +21,9 @@ void Event::loadEvents(const QDate &start_day, int days, QList<Event> *events)
         " where " +
         "(" + Events::DT_END + " is null)" +
         " and " + "( " +
-        Events::DT_START + " <= " + end + " and " +
+        Events::DT_START + " <= " + QString::number(end) + " and " +
         + "(" + Events::LAST_DATE + " is null or " +
-        Events::LAST_DATE + " >= " + begin + ")"
+        Events::LAST_DATE + " >= " + QString::number(begin) + ")"
         + " )");
 
 //  select * from events
