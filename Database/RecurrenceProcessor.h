@@ -24,11 +24,10 @@ private:
 
   int calculateByXXCount(const short* by_XX_array, int by_XX_size);
   int day2TimeDay(const icalrecurrencetype_weekday& ical_weekday);
+  int icalByDay2WeekDay(short ical_by_day_day);
 
   icalrecurrencetype m_recur;
   int byDayCount, byMonthDayCount;
-
-//  bool m_days_first_occured;
 
   // 这两个数组的索引与icalrecurrencetype中
   // bymonthday,byday数组的index完全一致

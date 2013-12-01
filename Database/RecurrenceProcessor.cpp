@@ -5,7 +5,6 @@ RecurrenceProcessor::RecurrenceProcessor()
   : byDayCount(0), byMonthDayCount(0)
 {
   icalrecurrencetype_clear(&m_recur);
-//  m_days_first_occured = true;
 //  m_bymonthday_last_occurs = new QList<QDate>();
 //  m_byday_last_occurs = new QList<QDate>();
 }
@@ -85,7 +84,6 @@ void RecurrenceProcessor::expand(qint64 dtstart,
       month--;
 
       int dayIndex = 0;
-//      int lastDayToExamine = 0;
 
       if (useDays) {
 //        if (freq == ICAL_WEEKLY_RECURRENCE) {
@@ -111,45 +109,113 @@ void RecurrenceProcessor::generateDaysList(const QDate &current_month,
 {
 //  int dayIndex = 0;
   int days_in_current_month = current_month.daysInMonth();
+  QDate first_day = QDate(current_month.year(), current_month.month(), 1);
+
+  // TODO: 这里统统没考虑规则为负的情形
+  // (计算日期从每月的最后倒着往前数）
+  //类似BYMONTHDAY=-3,BYDAY=-2MO,... 当前版本，遇此情形可能会崩溃！
+
+  // TODO: interval > 1的处理依然不正确，
+  // 对于类似BYMONTHDAY=31,29的情形，last_occur的追踪是错误的！
 
   // BYMONTHDAY
   if (byMonthDayCount > 0 && m_recur.freq > ICAL_WEEKLY_RECURRENCE) {
     int dayIndex = 0;
     int interval = m_recur.interval;
 
-    if (interval > 1) {
-      while (dayIndex < byMonthDayCount) {
-        int day = m_recur.by_month_day[dayIndex];
+    while (dayIndex < byMonthDayCount) {
+      int day = m_recur.by_month_day[dayIndex];
+      bool first_occured = m_bymonthday_last_occurs.at(dayIndex).isNull();
 
-        if (day <= days_in_current_month) {
-          if (m_bymonthday_last_occurs.at(dayIndex).isNull()) {
-            dayslist->append(day);
+      if (day <= days_in_current_month) {
+        if (interval == 1 || first_occured) {
+          dayslist->append(day);
+          if (interval > 1) {
             m_bymonthday_last_occurs.append(
                   QDate(current_month.year(), current_month.month(), day));
-          } else {
-            QDate last_occured_date = m_bymonthday_last_occurs.at(dayIndex);
-            last_occured_date = last_occured_date.addMonths(interval);
-            if (last_occured_date.month() == current_month.month()) {
-              dayslist->append(day);
-              m_bymonthday_last_occurs.at(dayIndex) = last_occured_date;
-            }
           }
-        }
-      } // end while
-    } else { // interval = 1
-      while (dayIndex < byMonthDayCount) {
-        int day = m_recur.by_month_day[dayIndex];
-        if (day <= days_in_current_month) {
-          dayslist->append(dayj);
-        }
+        } else { // interval > 1 && first_occured = false
+          QDate last_occured_date = m_bymonthday_last_occurs.at(dayIndex);
+          last_occured_date = last_occured_date.addMonths(interval);
+          if (last_occured_date.month() == current_month.month()) {
+            dayslist->append(day);
+            m_bymonthday_last_occurs.at(dayIndex) = last_occured_date;
+          }
+        } // end else
       }
-    }
+      dayIndex++;
+    } // end while
+
+
   } // end BYMONTHDAY
 
   // BYDAY
   if (byDayCount > 0) {
+    // TODO: 这里暂时忽略了WKST的影响，有待以后完善，额，2.0版以后再说吧
 
-  }
+    int dayIndex = 0;
+    int firstday_of_week = first_day.dayOfWeek();
+    int interval = m_recur.interval;
+
+    while (dayIndex < byDayCount) {
+      int ical_by_day_day = m_recur.by_day[dayIndex];
+      int day_number = ical_by_day_day / 8;
+      int day_of_week = icalByDay2WeekDay(ical_by_day_day);
+
+      int day = 0;
+      if (day_of_week >= firstday_of_week) {
+        day = day_of_week - firstday_of_week + 1 + 7*day_number;
+      } else {
+        day = day_of_week + 8 - firstday_of_week + 7*day_number;
+      }
+      bool is_first_occured = m_byday_last_occurs.at(dayIndex).isNull();
+
+      if (day <= days_in_current_month) {
+        if (interval == 1 || is_first_occured) {
+          // weekly event
+          if (m_recur.freq == ICAL_WEEKLY_RECURRENCE) {
+            while (day <= days_in_current_month) {
+              dayslist->append(day);
+              if (interval > 1) {
+                m_byday_last_occurs.at(dayIndex) = day;
+              }
+              day += 7;
+            }
+          } else { // monthly event
+            if (day <= days_in_current_month) {
+              dayslist->append(day);
+              if (interval > 1) {
+                m_byday_last_occurs.at(dayIndex) = day;
+              }
+            }
+          }
+        } else { // interval > 1 && is_first_occured = false
+          // weekly event
+          if (m_recur.freq == ICAL_WEEKLY_RECURRENCE) {
+            last_occured_date = last_occured_date.addDays(interval * 7);
+            if (last_occured_date.month() == current_month.month()) {
+              while (day <= days_in_current_month) {
+                dayslist->append(day);
+                m_byday_last_occurs.at(dayIndex) = day;
+                day += interval*7;
+              }
+            }
+          } else { // monthly event
+            QDate last_occured_date = m_byday_last_occurs.at(dayIndex);
+            last_occured_date = last_occured_date.addMonths(interval);
+            if (last_occured_date.month() == current_month.month()) {
+              if (day <= days_in_current_month) {
+                dayslist->append(day);
+                m_byday_last_occurs.at(dayIndex) = day;
+              }
+            }
+          }
+        } // end else
+      } // end if
+
+      dayIndex++;
+    } // end while
+  } // end BYDAY
 }
 
 int RecurrenceProcessor::calculateByXXCount(const short* by_XX_array,
@@ -163,6 +229,22 @@ int RecurrenceProcessor::calculateByXXCount(const short* by_XX_array,
   return count;
 }
 
+//
+// @return  1 = Monday, ..., 7 = Sunday.
+// (Qt中QDate的dayOfWeek, 1 = Monday, 7 = Sunday)
+//
+int RecurrenceProcessor::icalByDay2WeekDay(short ical_by_day_day) {
+  ical_by_day_day = static_cast<int>(ical_by_day_day);
+  ical_by_day_day %= 8;
+
+  if (ical_by_day_day == 1) { // Sunday
+    return 7;
+  } else {
+    return ical_by_day_day - 1;
+  }
+}
+
+// 用于解析WKST
 int RecurrenceProcessor::day2TimeDay(
     const icalrecurrencetype_weekday& ical_weekday)
 {
@@ -185,3 +267,103 @@ int RecurrenceProcessor::day2TimeDay(
     throw QString("bad type: ICAL_NO_WEEKDAY");
   }
 }
+
+//    if (interval > 1) {
+//      while (dayIndex < byMonthDayCount) {
+//        int day = m_recur.by_month_day[dayIndex];
+
+//        if (day <= days_in_current_month) {
+//          if (m_bymonthday_last_occurs.at(dayIndex).isNull()) {
+//            dayslist->append(day);
+//            m_bymonthday_last_occurs.append(
+//                  QDate(current_month.year(), current_month.month(), day));
+//          } else {
+//            QDate last_occured_date = m_bymonthday_last_occurs.at(dayIndex);
+//            last_occured_date = last_occured_date.addMonths(interval);
+//            if (last_occured_date.month() == current_month.month()) {
+//              dayslist->append(day);
+//              m_bymonthday_last_occurs.at(dayIndex) = last_occured_date;
+//            }
+//          }
+//        }
+//        dayIndex++;
+//      } // end while
+//    } else { // interval = 1
+//      while (dayIndex < byMonthDayCount) {
+//        int day = m_recur.by_month_day[dayIndex];
+//        if (day <= days_in_current_month) {
+//          dayslist->append(day);
+//        }
+//        dayIndex++;
+//      }
+//    }
+
+
+//    if (interval > 1) {
+//      while (dayIndex < byDayCount) {
+//        int ical_by_day_day = m_recur.by_day[dayIndex];
+//        int day_number = ical_by_day_day / 8;
+//        int day_of_week = icalByDay2WeekDay(ical_by_day_day);
+
+//        int day = 0;
+//        if (day_of_week >= firstday_of_week) {
+//          day = day_of_week - firstday_of_week + 1 + 7*day_number;
+//        } else {
+//          day = day_of_week + 8 - firstday_of_week + 7*day_number;
+//        }
+
+//        if (m_byday_last_occurs.at(dayIndex).isNull()) {
+//          // weekly event
+//          // ...
+//          // monthly event
+//          // ...
+//        } else {
+//          // monthly event
+//          QDate last_occured_date = m_byday_last_occurs.at(dayIndex);
+//          last_occured_date = last_occured_date.addMonths(interval);
+//          if (last_occured_date.month() == current_month.month()) {
+//            if (day <= days_in_current_month) {
+//              dayslist->append(day);
+//              m_byday_last_occurs.at(dayIndex) = day;
+//            }
+//          }
+
+//          // weekly event
+//          last_occured_date = last_occured_date.addDays(interval * 7);
+//          if (last_occured_date.month() == current_month.month()) {
+//            while (day <= days_in_current_month) {
+//              dayslist->append(day);
+//              m_byday_last_occurs.at(dayIndex) = day;
+//              day += interval*7;
+//            }
+//          }
+//        }
+//      }
+//    } else { // interval = 1
+//      while (dayIndex < byDayCount) {
+//        int ical_by_day_day = m_recur.by_day[dayIndex];
+//        int day_number = ical_by_day_day / 8;
+//        int day_of_week = icalByDay2WeekDay(ical_by_day_day);
+
+//        int day = 0;
+//        if (day_of_week >= firstday_of_week) {
+//          day = day_of_week - firstday_of_week + 1 + 7*day_number;
+//        } else {
+//          day = day_of_week + 8 - firstday_of_week + 7*day_number;
+//        }
+
+//        // weekly event
+//        if (m_recur.freq == ICAL_WEEKLY_RECURRENCE) {
+//          while (day <= days_in_current_month) {
+//            dayslist->append(day);
+//            day += 7;
+//          }
+//        } else { // monthly event
+//          if (day <= days_in_current_month) {
+//            dayslist->append(day);
+//          }
+//        }
+
+//        dayIndex++;
+//      }
+//    }
