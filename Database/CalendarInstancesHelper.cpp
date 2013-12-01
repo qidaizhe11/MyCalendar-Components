@@ -29,9 +29,11 @@ void CalendarInstancesHelper::performInstanceExpansion(qint64 begin, qint64 end,
 {
   RecurrenceProcessor* rp = new RecurrenceProcessor();
 
+  QList<Instance*> instances_list;
+
   qint64 dtstart_millis = record.value(Events::DT_START).toLongLong();
   int event_id = record.value(Events::_ID).toInt();
-  int calendar_id = record.value(Events::CALENDAR_ID).toInt();
+//  int calendar_id = record.value(Events::CALENDAR_ID).toInt();
   QString duration_str = record.value(Events::DURATION).toString();
 
   QString rrule_str = record.value(Events::RRULE).toString();
@@ -62,7 +64,42 @@ void CalendarInstancesHelper::performInstanceExpansion(qint64 begin, qint64 end,
 
     foreach (qint64 date, dates) {
       qint64 dtend_millis = date + duration_millis;
-      // TODO: insert or replace in Instances table.
+      Instance* instance_value = new Instance();
+      instance_value.m_event_id = event_id;
+      instance_value.m_begin = date;
+      instance_value.m_end = dtend_millis;
+      instances_list.append(instance_value);
+    }
+  }
+}
+
+void CalendarInstancesHelper::instancesReplace(QList<Instance *> instances_list)
+{
+  Instance* instance_value = nullptr;
+  QString database_error;
+
+  QString SQL_REPLACE_INSTANCES = QString(
+        "insert or replace into " + Tables::INSTANCES + " ("
+        + Instances::EVENT_ID + ", "
+        + Instances::BEGIN + ", "
+        + Instances::END + ") "
+        + "values ("
+        + ":event_id, :begin, :end)");
+
+  QSqlDatabase db = QSqlDatabase::database();
+  if (db.isValid()) {
+    if (db.isOpen()) {
+      QSqlQuery query(db);
+
+      foreach (instance_value, instances_list) {
+        query.prepare(SQL_REPLACE_INSTANCES);
+
+        query.bindValue(":event_id", instance_value->m_event_id);
+        query.bindValue(":begin", instance_value->m_begin);
+        query.bindValue(":end", instance_value->m_end);
+        query.exec();
+      }
+      database_error = query.lastError().text();
     }
   }
 }

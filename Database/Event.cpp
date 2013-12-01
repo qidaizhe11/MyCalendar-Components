@@ -2,6 +2,7 @@
 #include "Event.h"
 #include <QtSql>
 #include "CalendarContract.h"
+#include "CalendarInstancesHelper.h"
 
 Event::Event()
 {
@@ -9,6 +10,8 @@ Event::Event()
 
 void Event::loadEvents(const QDate &start_day, int days, QList<Event> *events)
 {
+  CalendarInstancesHelper* instances_helper = new CalendarInstancesHelper();
+
   QDate end_day = start_day.addDays(days - 1);
   qint64 begin = QDateTime(start_day).toMSecsSinceEpoch();
   qint64 end = QDateTime(end_day, QTime(23, 59)).toMSecsSinceEpoch();
@@ -36,7 +39,9 @@ void Event::loadEvents(const QDate &start_day, int days, QList<Event> *events)
       bool rc = query.exec(SQL_SELECT_REPEAT_EVENTS);
       if (rc) {
         while (query.next()) {
-          QSqlRecord record = query.record();
+//          QSqlRecord record = query.record();
+          instances_helper->performInstanceExpansion(
+                begin, end, query.record());
         }
       }
     }

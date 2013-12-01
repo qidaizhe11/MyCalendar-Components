@@ -14,6 +14,8 @@ void RecurrenceProcessor::expand(qint64 dtstart,
                                  qint64 range_start, qint64 range_end,
                                  QList<qint64> *expandedDates)
 {
+  int count = 0;
+
   QDateTime iterator;
   QDateTime until;
   QDateTime generated;
@@ -68,7 +70,7 @@ void RecurrenceProcessor::expand(qint64 dtstart,
   }
 
   bool eventEnded = false;
-  int failsafe = 0; // Avoid infinite loops
+//  int failsafe = 0; // Avoid infinite loops
 
   while (!eventEnded) {
     int monthIndex = 0;
@@ -84,6 +86,8 @@ void RecurrenceProcessor::expand(qint64 dtstart,
       month--;
 
       int dayIndex = 0;
+      int my_by_day_count = 0;
+      QList<int> my_by_day;
 
       if (useDays) {
 //        if (freq == ICAL_WEEKLY_RECURRENCE) {
@@ -92,15 +96,76 @@ void RecurrenceProcessor::expand(qint64 dtstart,
 //          dayIndex = iterator.date().day() - weekStartAdj;
 //          lastDayToExamine = dayIndex + 6;
 //        }
-        // TODO: begin here.
-        QList<int> my_by_day_count;
-        QDate current_iterator = QDate(iteratorYear, month, 1);
+        generateDaysList(iterator.date(), &my_by_day);
       }
 
       do { // day
+        int day = useDays ? my_by_day.at(dayIndex) : iteratorDay;
 
-      } while (!eventEnded);
+        generated = QDateTime(
+              QDate(iteratorYear, month, day), generated.time());
+
+        qint64 genDateValue = generated.toMSecsSinceEpoch();
+
+        if (genDateValue >= dtstart) {
+          if (!dtstart == genDateValue &&
+              dtstart >= range_start && dtstart < range_end) {
+            ++count;
+          }
+
+          if (genDateValue > untilDateValue) {
+            eventEnded = true;
+            break;
+          }
+
+          if (genDateValue >= range_end) {
+            eventEnded = true;
+            break;
+          }
+
+          if (genDateValue >= range_start) {
+            expandedDates->append(genDateValue);
+          }
+
+          if (recur.count > 0 && recur.count == count) {
+            eventEnded = true;
+            break;
+          }
+        }
+        dayIndex++;
+      } while (!eventEnded && useDays && dayIndex < my_by_day_count);
+      monthIndex++;
     } while (!eventEnded && usebymonth && monthIndex < byMonthCount);
+
+    int oldDay = iterator.date().day();
+    generated = iterator;
+    int n = 1;
+    while (true) {
+      int value = freqAmount * n;
+      switch (freq) {
+      case ICAL_DAILY_RECURRENCE:
+      case ICAL_WEEKLY_RECURRENCE:
+        iterator.addDays(value);
+        break;
+      case ICAL_MONTHLY_RECURRENCE:
+        iterator.addMonths(value);
+        break;
+      case ICAL_YEARLY_RECURRENCE:
+        iterator.addYears(value);
+        break;
+      default:
+        break;
+      }
+
+      if (freq != ICAL_YEARLY_RECURRENCE && freq != ICAL_MONTHLY_RECURRENCE) {
+        break;
+      }
+      if (iterator.date().day == oldDay) {
+        break;
+      }
+      n++;
+      iterator = generated;
+    }
   }
 }
 
