@@ -3,9 +3,10 @@
 
 #include <QString>
 #include <QDateTime>
-//#include <QVector>
 #include <QList>
 #include <libical/ical.h>
+
+class DaySet;
 
 class RecurrenceProcessor
 {
@@ -16,23 +17,45 @@ public:
               qint64 range_start, qint64 range_end,
               QList<qint64>* expandedDates);
 
+
+
+  static void unsafeNormalize(int year, int month, int day, QDate* normalized_date);
+
+  static int yearLength(int year);
+
 private:
-  void generateDaysList(const QDate& current_month,
+//  void generateDaysList(const QDate& current_month,
 //                        const icalrecurrencetype& recur,
 //                        int byDayCount, int byMonthDayCount,
-                        QList<int>* dayslist);
+//                        QList<int>* dayslist);
 
-  int calculateByXXCount(const short* by_XX_array, int by_XX_size);
-  int day2TimeDay(const icalrecurrencetype_weekday& ical_weekday);
-  int icalByDay2WeekDay(short ical_by_day_day);
+  QDateTime m_iterator;
+  QDateTime m_until;
+  QDateTime m_generated;
+  DaySet* m_days;
 
   icalrecurrencetype m_recur;
-  int byDayCount, byMonthDayCount;
+//  int byDayCount, byMonthDayCount;
+};
 
-  // 这两个数组的索引与icalrecurrencetype中
-  // bymonthday,byday数组的index完全一致
-  QList<QDate> m_bymonthday_last_occurs;
-  QList<QDate> m_byday_last_occurs;
+class DaySet
+{
+public:
+  DaySet(bool zulu);
+
+  void setRecurrence(const icalrecurrencetype& recur);
+
+  bool get(const QDateTime& iterator, int day);
+
+private:
+  int generateDaysList(const QDate& generated,
+                       const icalrecurrencetype& recur);
+
+  icalrecurrencetype m_r;
+  int m_days;
+  QDate m_date;
+  int m_year;
+  int m_month;
 };
 
 #endif // RECURRENCEPROCESSOR_H

@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     Database/Event.cpp \
     Database/CalendarInstancesHelper.cpp \
     Database/RecurrenceProcessor.cpp \
-    Database/Database.cpp
+    Database/Database.cpp \
+    Database/EventRecurrence.cpp
 
 # Installation path
 # target.path =
@@ -40,7 +41,8 @@ HEADERS += \
     Database/Event.h \
     Database/CalendarInstancesHelper.h \
     Database/RecurrenceProcessor.h \
-    Database/Database.h
+    Database/Database.h \
+    Database/EventRecurrence.h
 
 OTHER_FILES += \
     README

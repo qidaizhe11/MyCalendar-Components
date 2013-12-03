@@ -43,7 +43,7 @@ void CalendarInstancesHelper::performInstanceExpansion(qint64 begin, qint64 end,
   QString duration_str = record.value(Events::DURATION).toString();
 
   QString rrule_str = record.value(Events::RRULE).toString();
-  QString rdate_str = record.value(Events::RDATE).toString();
+//  QString rdate_str = record.value(Events::RDATE).toString();
 
   icaldurationtype duration;
 
